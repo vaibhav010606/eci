@@ -1,0 +1,300 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── SOVEREIGN VOICE INTERFACE — Design System ─────────────────────────── */
+
+:root {
+  --color-navy:    #000080;
+  --color-saffron: #FF9933;
+  --color-green:   #138808;
+  --color-surface: #F9F9F9;
+  --color-surface-low: #F3F3F4;
+  --color-on-surface: #1A1C1C;
+  --color-on-surface-variant: #464653;
+  --color-outline: #767684;
+  --font-main: 'Noto Sans Devanagari', 'Noto Sans Bengali', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Noto Sans Kannada', 'Noto Sans Malayalam', 'Noto Sans Gujarati', 'Noto Sans Gurmukhi', 'Noto Sans Odia', 'Public Sans', 'Noto Sans', system-ui, sans-serif;
+}
+
+/* ─── Base Reset & Typography ──────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  font-family: var(--font-main);
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── High Contrast Mode ───────────────────────────────────────────────────── */
+.high-contrast {
+  --color-surface: #000000;
+  --color-on-surface: #ffffff;
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.high-contrast body {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+/* ─── Skeleton Loading Animation ──────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.skeleton {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(to right, #e5e7eb 4%, #f3f4f6 25%, #e5e7eb 36%);
+  background-size: 1000px 100%;
+}
+
+.high-contrast .skeleton {
+  background: linear-gradient(to right, #374151 4%, #4b5563 25%, #374151 36%);
+}
+
+/* ─── Custom Scrollbar (minimal) ──────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c6c5d5; border-radius: 4px; }
+
+/* ─── Tile Active State ───────────────────────────────────────────────────── */
+.voting-tile {
+  background-color: #ffffff;
+  border: 2.5px solid var(--color-navy);
+  border-radius: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: var(--color-navy);
+  padding: 1.5rem;
+  aspect-ratio: 1 / 1;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.voting-tile:hover {
+  background-color: #EEF0FF;
+  box-shadow: 0 4px 16px rgba(0, 0, 128, 0.12);
+}
+
+.voting-tile:active {
+  background-color: #dde0f7;
+  transform: scale(0.97);
+}
+
+/* ─── Saffron Banner ──────────────────────────────────────────────────────── */
+.saffron-banner {
+  background-color: var(--color-saffron);
+  color: var(--color-navy);
+  width: 100%;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.saffron-banner .banner-btn {
+  background-color: var(--color-navy);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: opacity 0.15s ease;
+}
+
+.saffron-banner .banner-btn:active { opacity: 0.8; }
+
+/* ─── App Header ──────────────────────────────────────────────────────────── */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 2px solid #e0e0e0;
+  height: 72px;
+  padding: 0 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ─── Primary Button (Navy) ───────────────────────────────────────────────── */
+.btn-primary {
+  background-color: var(--color-navy);
+  color: #ffffff;
+  font-family: var(--font-main);
+  font-weight: 700;
+  font-size: 1.125rem;
+  padding: 1rem 1.5rem;
+  border-radius: 0.875rem;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  transition: opacity 0.15s ease;
+}
+.btn-primary:active { opacity: 0.85; }
+
+/* ─── Saffron Action Button ───────────────────────────────────────────────── */
+.btn-saffron {
+  background-color: var(--color-saffron);
+  color: var(--color-navy);
+  font-family: var(--font-main);
+  font-weight: 800;
+  font-size: 1.125rem;
+  padding: 1rem 1.5rem;
+  border-radius: 0.875rem;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  transition: filter 0.15s ease;
+}
+.btn-saffron:active { filter: brightness(0.92); }
+
+/* ─── Voice Mic Button ────────────────────────────────────────────────────── */
+.mic-btn {
+  background-color: var(--color-saffron);
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  width: 10rem;
+  height: 10rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(255, 153, 51, 0.4);
+  transition: transform 0.15s ease;
+}
+.mic-btn:active { transform: scale(0.95); }
+
+.mic-btn::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 9999px;
+  border: 4px solid var(--color-saffron);
+  opacity: 0.35;
+  animation: mic-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes mic-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.35; }
+  50%       { transform: scale(1.1); opacity: 0.1; }
+}
+
+/* ─── Settings Toggle ─────────────────────────────────────────────────────── */
+.toggle-track {
+  width: 4rem;
+  height: 2rem;
+  border-radius: 9999px;
+  position: relative;
+  transition: background-color 0.25s ease;
+  cursor: pointer;
+  border: none;
+  flex-shrink: 0;
+}
+.toggle-track.on  { background-color: var(--color-saffron); }
+.toggle-track.off { background-color: #d1d5db; }
+
+.toggle-thumb {
+  position: absolute;
+  top: 0.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: #ffffff;
+  border-radius: 9999px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  transition: left 0.25s ease;
+}
+.toggle-track.on  .toggle-thumb { left: 2.25rem; }
+.toggle-track.off .toggle-thumb { left: 0.25rem; }
+
+/* ─── Settings Card ───────────────────────────────────────────────────────── */
+.settings-card {
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+}
+
+/* ─── Font Size Option ────────────────────────────────────────────────────── */
+.font-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-radius: 0.875rem;
+  border: 2px solid #e0e0e0;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.font-option.selected {
+  border-color: var(--color-navy);
+  background-color: rgba(0, 0, 128, 0.04);
+}
+
+/* ─── Result Card (found state) ───────────────────────────────────────────── */
+.result-card {
+  background: #ffffff;
+  border: 4px solid var(--color-green);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+}
+
+.result-field {
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 0.75rem;
+}
+
+.result-field label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.25rem;
+}
+
+.result-field span {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-navy);
+}
+
+.booth-box {
+  background: #EFF6FF;
+  border: 2px solid #BFDBFE;
+  border-radius: 0.875rem;
+  padding: 1.25rem;
+  margin-top: 1rem;
+}
