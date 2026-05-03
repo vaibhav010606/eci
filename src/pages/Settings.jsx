@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Check, Settings as SettingsIcon, Bell, Shield, Type, MonitorSmartphone, Info } from 'lucide-react';
 import { t } from '../utils/translations';
 
@@ -38,6 +39,15 @@ const GREEN = '#138808';
 function SectionIcon({ icon: Icon }) {
   return <Icon size={26} style={{ color: NAVY, flexShrink: 0 }} />;
 }
+
+Settings.propTypes = {
+  highContrast: PropTypes.bool.isRequired,
+  setHighContrast: PropTypes.func.isRequired,
+  fontSize: PropTypes.string.isRequired,
+  setFontSize: PropTypes.func.isRequired,
+  playAudio: PropTypes.func.isRequired,
+  language: PropTypes.string.isRequired,
+};
 
 export default function Settings({ highContrast, setHighContrast, fontSize, setFontSize, playAudio, language }) {
   const fontSizes = [

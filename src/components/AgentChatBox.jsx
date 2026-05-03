@@ -12,6 +12,13 @@ const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'fallback-key';
 const NAVY = '#000080';
 const SAFFRON = '#FF9933';
 
+import PropTypes from 'prop-types';
+
+AgentChatBox.propTypes = {
+  playAudio: PropTypes.func.isRequired,
+  language: PropTypes.string.isRequired,
+};
+
 export default function AgentChatBox({ playAudio, language }) {
   const navigate = useNavigate();
   const [isListening, setIsListening] = useState(false);

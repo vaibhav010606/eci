@@ -5,6 +5,13 @@ import { motion } from 'framer-motion';
 import { t } from '../utils/translations';
 import { LANG_FONTS } from '../utils/constants';
 import AgentChatBox from '../components/AgentChatBox';
+import PropTypes from 'prop-types';
+
+Home.propTypes = {
+  isSirActive: PropTypes.bool.isRequired,
+  playAudio: PropTypes.func.isRequired,
+  language: PropTypes.string.isRequired,
+};
 
 export default function Home({ isSirActive, playAudio, language }) {
   const navigate = useNavigate();

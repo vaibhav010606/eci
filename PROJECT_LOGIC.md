@@ -22,12 +22,12 @@ Matdaata Mitra is a high-performance, voice-first PWA designed to bridge the acc
 
 ## 4. Testing & Reliability
 - **Framework:** Vitest + React Testing Library + JSDOM.
-- **Coverage:** 27 unit and integration tests covering:
+- **Coverage:** 126 unit and integration tests (83%+ overall coverage) covering:
     - Component rendering and state changes.
     - Translation engine reliability.
     - Security utility correctness (Sanitization/Rate Limiting).
-    - Audio Engine status management.
-    - Navigation and Link routing.
+    - Audio Engine status management and Sarvam API fallback.
+    - Navigation, External Link Routing, and Edge Cases.
 
 ## 5. Accessibility (A11y)
 - **High Contrast Mode:** Dynamic CSS classes for 7:1 contrast ratio.
