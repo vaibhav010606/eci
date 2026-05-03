@@ -1,15 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mic, Send, MessageSquare } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { Mic, Send } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { t } from '../utils/translations';
 import { LANG_FONTS } from '../utils/constants';
 import { sanitizeInput, checkRateLimit } from '../utils/security';
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "fallback-key";
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+/** API key for Gemini — loaded lazily inside processIntent for testability. */
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'fallback-key';
 
 const NAVY = '#000080';
 const SAFFRON = '#FF9933';
@@ -104,7 +102,7 @@ export default function AgentChatBox({ playAudio, language }) {
 
   const processIntent = async (text) => {
     setStatus('processing');
-    
+
     try {
       const languageName = getLanguageName(language);
       const prompt = `You are "Matdaata Mitra", an official, friendly, and expert AI Voting Assistant for the Election Commission of India (ECI).
@@ -121,6 +119,10 @@ Instructions:
 5. Do not use Markdown, just plain text.
 
 Response:`;
+
+      const { GoogleGenerativeAI } = await import('@google/generative-ai');
+      const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+      const model = genAI.getGenerativeModel({ model: 'gemini-3-flash-preview' });
 
       const result = await model.generateContent(prompt);
       const responseText = result.response.text();
