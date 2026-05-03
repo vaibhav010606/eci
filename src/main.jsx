@@ -4,6 +4,10 @@ import App from './App.jsx'
 import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import { registerSW } from 'virtual:pwa-register'
+import { validateEnv } from './utils/security'
+
+// Validate required env vars on startup
+validateEnv();
 
 const updateSW = registerSW({
   onNeedRefresh() {

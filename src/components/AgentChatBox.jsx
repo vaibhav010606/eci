@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { t } from '../utils/translations';
 import { LANG_FONTS } from '../utils/constants';
+import { sanitizeInput, checkRateLimit } from '../utils/security';
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "fallback-key";
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
@@ -75,10 +76,21 @@ export default function AgentChatBox({ playAudio, language }) {
   };
 
   const handleSend = (text) => {
-    if (!text.trim()) return;
-    setMessages(prev => [...prev, { sender: 'user', text }]);
+    const clean = sanitizeInput(text);
+    if (!clean) return;
+
+    // Rate limit check
+    const { allowed, waitMs } = checkRateLimit();
+    if (!allowed) {
+      const waitSec = Math.ceil(waitMs / 1000);
+      const msg = `Please wait ${waitSec} seconds before sending another message.`;
+      setMessages(prev => [...prev, { sender: 'agent', text: msg }]);
+      return;
+    }
+
+    setMessages(prev => [...prev, { sender: 'user', text: clean }]);
     setTranscript('');
-    processIntent(text);
+    processIntent(clean);
   };
 
   const getLanguageName = (code) => {
@@ -127,7 +139,8 @@ Response:`;
 
       setStatus('idle');
     } catch (error) {
-      console.error("Gemini Error:", error);
+      // Log only error type, not full stack (avoids leaking internal info)
+      console.warn("Agent error:", error?.message?.slice(0, 100));
       const msg = t('va_not_understood', language) || "I'm having trouble connecting. Please try again or use the links below.";
       playAudio(msg);
       setStatus('idle');
