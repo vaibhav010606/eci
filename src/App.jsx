@@ -11,30 +11,33 @@ import HelpCenter from './pages/HelpCenter';
 import Settings from './pages/Settings';
 import ElectionResults from './pages/ElectionResults';
 import VoiceAssistant from './pages/VoiceAssistant';
+import RegisterAI from './pages/RegisterAI';
+import VoterID from './pages/VoterID';
+import VotingDay from './pages/VotingDay';
 import AudioEngine from './utils/AudioEngine';
+import { analytics, logEvent } from './utils/firebase';
 import { t } from './utils/translations';
 import { LANG_FONTS } from './utils/constants';
 
 const headerStyle = {
   position: 'sticky',
   top: 0,
-  zIndex: 50,
-  background: 'rgba(255,255,255,0.92)',
-  backdropFilter: 'blur(12px)',
-  WebkitBackdropFilter: 'blur(12px)',
-  borderBottom: '2px solid #E0E0E0',
-  height: '72px',
-  padding: '0 1.25rem',
+  zIndex: 100,
+  background: '#FFFFFF',
+  borderBottom: '1px solid #E2E6F0',
+  height: '64px',
+  padding: '0 1rem',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
 };
 
 const iconBtnStyle = {
-  padding: '0.625rem',
-  borderRadius: '9999px',
+  padding: '0.5rem',
+  borderRadius: '8px',
   border: 'none',
-  backgroundColor: '#F3F3F4',
+  backgroundColor: 'transparent',
   cursor: 'pointer',
   display: 'flex',
   alignItems: 'center',
@@ -45,16 +48,16 @@ const replayBtnStyle = {
   position: 'fixed',
   bottom: '1.5rem',
   right: '1.5rem',
-  width: '3.75rem',
-  height: '3.75rem',
-  backgroundColor: '#000080',
+  width: '3.5rem',
+  height: '3.5rem',
+  backgroundColor: '#FF6B00',
   color: '#ffffff',
   borderRadius: '9999px',
   border: 'none',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  boxShadow: '0 8px 24px rgba(0,0,128,0.35)',
+  boxShadow: '0 8px 24px rgba(255,107,0,0.35)',
   cursor: 'pointer',
   zIndex: 50,
 };
@@ -67,6 +70,15 @@ function App() {
   const [isSirActive, setIsSirActive] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    // Log page views to Firebase Analytics
+    if (analytics) {
+      logEvent(analytics, 'page_view', {
+        page_path: location.pathname
+      });
+    }
+  }, [location]);
 
   useEffect(() => {
     if (highContrast) {
@@ -131,45 +143,46 @@ function App() {
       {/* ── HEADER ─────────────────────────────────────────── */}
       <header style={headerStyle}>
         <div
-          style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', cursor: 'pointer' }}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}
           onClick={() => { navigate('/'); playScreenAudio('Home Screen'); }}
         >
           <div style={{
-            width: '2.5rem', height: '2.5rem',
-            backgroundColor: '#FF9933',
-            borderRadius: '9999px',
+            width: '2.1rem', height: '2.1rem',
+            backgroundColor: '#FF6B00',
+            borderRadius: '50%',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#ffffff', fontWeight: 800, fontSize: '1.2rem',
-            boxShadow: '0 2px 8px rgba(255,153,51,0.4)',
+            color: '#ffffff', fontSize: '1.1rem',
           }}>
-            V
+            🗳️
           </div>
-          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, color: '#000080', fontFamily: activeFont }}>
-            {t('title', language) || 'Voting Assistant'}
+          <h1 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: '#0D1B4B', fontFamily: activeFont }}>
+            Matdaata Mitra
           </h1>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <button onClick={toggleMute} style={iconBtnStyle} aria-label={isMuted ? t('aria_unmute', language) : t('aria_mute', language)}>
             {isMuted
-              ? <VolumeX size={24} style={{ color: '#767684' }} />
-              : <Speaker size={24} style={{ color: '#FF9933' }} />
+              ? <VolumeX size={22} style={{ color: '#6B7280' }} />
+              : <Speaker size={22} style={{ color: '#FF6B00' }} />
             }
           </button>
           <button onClick={() => navigate('/settings')} style={iconBtnStyle} aria-label={t('aria_settings', language)}>
-            <SettingsIcon size={24} style={{ color: '#000080' }} />
+            <SettingsIcon size={22} style={{ color: '#0D1B4B' }} />
           </button>
         </div>
       </header>
 
       {/* ── MAIN CONTENT ───────────────────────────────────── */}
-      <main style={{ maxWidth: '480px', margin: '0 auto', position: 'relative', minHeight: 'calc(100vh - 72px)' }}>
+      <main style={{ maxWidth: location.pathname === '/' || location.pathname === '/language' ? '1200px' : '480px', margin: '0 auto', position: 'relative', minHeight: 'calc(100vh - 72px)' }}>
         <Routes>
           <Route path="/" element={!language ? <LanguageSelect setLanguage={setLanguage} playAudio={playScreenAudio} /> : <Home isSirActive={isSirActive} playAudio={playScreenAudio} language={language} />} />
           <Route path="/language" element={<LanguageSelect setLanguage={setLanguage} playAudio={playScreenAudio} />} />
           <Route path="/search" element={<ElectoralRollSearch playAudio={playScreenAudio} language={language} />} />
-          <Route path="/register" element={<FormWizard formType="6" playAudio={playScreenAudio} language={language} />} />
-          <Route path="/update" element={<FormWizard formType="8" playAudio={playScreenAudio} language={language} />} />
+          <Route path="/register" element={<RegisterAI back={() => navigate('/')} playAudio={playScreenAudio} language={language} />} />
+          <Route path="/update" element={<RegisterAI back={() => navigate('/')} playAudio={playScreenAudio} language={language} />} />
+          <Route path="/voter-id" element={<VoterID back={() => navigate('/')} playAudio={playScreenAudio} language={language} />} />
+          <Route path="/voting-day" element={<VotingDay back={() => navigate('/')} playAudio={playScreenAudio} language={language} />} />
           <Route path="/evm" element={<EVMSimulator playAudio={playScreenAudio} language={language} />} />
           <Route path="/help" element={<HelpCenter playAudio={playScreenAudio} language={language} />} />
           <Route path="/results" element={<ElectionResults playAudio={playScreenAudio} language={language} />} />

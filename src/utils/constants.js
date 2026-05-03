@@ -6,9 +6,13 @@ export const LANG_FONTS = {
   ta: "'Noto Sans Tamil', 'Public Sans', sans-serif",
   te: "'Noto Sans Telugu', 'Public Sans', sans-serif",
   ml: "'Noto Sans Malayalam', 'Public Sans', sans-serif",
+  or: "'Noto Sans Odia', 'Public Sans', sans-serif",
+  mr: "'Noto Sans Devanagari', 'Public Sans', sans-serif",
+  pa: "'Noto Sans Gurmukhi', 'Public Sans', sans-serif",
+  ur: "'Noto Sans Arabic', 'Public Sans', sans-serif",
 };
 
-// 6 supported languages
+// 10 supported languages
 export const OFFICIAL_LANGUAGES = [
   { code: 'en', name: 'English',   native: 'English'   },
   { code: 'hi', name: 'Hindi',     native: 'हिन्दी'     },
@@ -16,4 +20,8 @@ export const OFFICIAL_LANGUAGES = [
   { code: 'ta', name: 'Tamil',     native: 'தமிழ்'      },
   { code: 'te', name: 'Telugu',    native: 'తెలుగు'     },
   { code: 'ml', name: 'Malayalam', native: 'മലയാളം'    },
+  { code: 'or', name: 'Odia',      native: 'ଓଡ଼ିଆ'      },
+  { code: 'mr', name: 'Marathi',   native: 'मराठी'     },
+  { code: 'pa', name: 'Punjabi',   native: 'ਪੰਜਾਬੀ'    },
+  { code: 'ur', name: 'Urdu',      native: 'اردو'       },
 ];

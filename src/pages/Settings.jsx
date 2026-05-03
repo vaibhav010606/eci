@@ -1,6 +1,5 @@
 import React from 'react';
 import { Check, Settings as SettingsIcon, Bell, Shield, Type, MonitorSmartphone, Info } from 'lucide-react';
-import { APP_DISCLAIMER } from '../utils/eciLinks';
 import { t } from '../utils/translations';
 
 // Explicit font per language — guarantees correct script rendering
@@ -166,7 +165,7 @@ export default function Settings({ highContrast, setHighContrast, fontSize, setF
       <div style={{ marginTop: '1.5rem', padding: '1rem', background: '#F9F9F9', border: '1.5px solid #e0e0e0', borderRadius: '0.875rem', display: 'flex', gap: '0.625rem', alignItems: 'flex-start' }}>
         <Info size={16} style={{ color: '#767684', flexShrink: 0, marginTop: '2px' }} />
         <p style={{ margin: 0, fontSize: '0.75rem', color: '#767684', lineHeight: 1.6, fontWeight: 500 }}>
-          {APP_DISCLAIMER}
+          {t('eci_disclaimer_full', language)}
         </p>
       </div>
     </div>

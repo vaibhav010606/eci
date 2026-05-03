@@ -1,5 +1,5 @@
 class AudioEngine {
-  static API_KEY = "sk_b9tbodgh_fzCEsmhYF4iKvLFHfY8kCDsJ";
+  static API_KEY = import.meta.env.VITE_SARVAM_API_KEY || "fallback-key";
   // Use non-stream endpoint — returns JSON with base64 audio
   static API_URL = "https://api.sarvam.ai/text-to-speech";
 
@@ -32,10 +32,15 @@ class AudioEngine {
     const langMap = {
       'en': 'en-IN',
       'hi': 'hi-IN',
+      'bn': 'bn-IN',
       'kn': 'kn-IN',
+      'ml': 'ml-IN',
+      'mr': 'mr-IN',
+      'or': 'or-IN',
+      'pa': 'pa-IN',
       'ta': 'ta-IN',
       'te': 'te-IN',
-      'ml': 'ml-IN',
+      'gu': 'gu-IN',
     };
     return langMap[langCode] || 'en-IN';
   }
@@ -153,7 +158,6 @@ class AudioEngine {
     if (this.audio) {
       this.audio.pause();
       this.audio.currentTime = 0;
-      this.audio = null;
     }
     if (window.speechSynthesis?.speaking) {
       window.speechSynthesis.cancel();

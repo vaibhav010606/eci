@@ -208,6 +208,17 @@ body {
   50%       { transform: scale(1.1); opacity: 0.1; }
 }
 
+.listening-pulse {
+  animation: listening-blink 1.5s infinite;
+  box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.2);
+}
+
+@keyframes listening-blink {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
 /* ─── Settings Toggle ─────────────────────────────────────────────────────── */
 .toggle-track {
   width: 4rem;
@@ -297,4 +308,36 @@ body {
   border-radius: 0.875rem;
   padding: 1.25rem;
   margin-top: 1rem;
+}
+
+/* ─── Home Layout ───────────────────────────────────────────────────────── */
+.home-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem;
+}
+@media (min-width: 768px) {
+  .home-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 2rem 1.5rem;
+  }
+  .home-left, .home-right {
+    flex: 1;
+    min-width: 0; /* prevent overflow */
+  }
+  .home-left {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .home-right {
+    position: sticky;
+    top: 90px;
+  }
+  .mobile-only-mic {
+    display: none !important;
+  }
 }

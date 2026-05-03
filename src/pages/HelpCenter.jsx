@@ -4,7 +4,7 @@ import {
   AlertTriangle, Smartphone, BarChart2, Wifi, WifiOff,
   Shield, HelpCircle
 } from 'lucide-react';
-import { ECI_LINKS, ECI_CONTACTS, ECI_AUDIO, openECILink } from '../utils/eciLinks';
+import { ECI_LINKS, getEciContacts, openECILink } from '../utils/eciLinks';
 import { t } from '../utils/translations';
 
 // Explicit font per language — guarantees correct script rendering
@@ -69,158 +69,82 @@ function LinkButton({ icon: Icon, label, sublabel, url, onPress, color }) {
 }
 
 export default function HelpCenter({ playAudio, language }) {
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const activeFont = LANG_FONTS[language] || "'Public Sans', sans-serif";
   const [openFaq, setOpenFaq] = useState(null);
 
-  useEffect(() => {
-    playAudio('Help and Complaints. Tap any option for assistance.');
-    const online = () => setIsOnline(true);
-    const offline = () => setIsOnline(false);
-    window.addEventListener('online', online);
-    window.addEventListener('offline', offline);
-    return () => { window.removeEventListener('online', online); window.removeEventListener('offline', offline); };
-  }, []);
-
-  const open = (url, label, audio) => {
-    if (audio) playAudio(audio);
-    openECILink(url, label, playAudio);
-  };
+  const HELP_ACTIONS = [
+    { id: 'helpline', label: "Call ECI Helpline", sub: "Toll-free 1950", icon: "📞", url: ECI_LINKS.helpline, color: '#0A7A3E' },
+    { id: 'grievance', label: "NGS Portal", sub: "File a formal complaint", icon: "⚖️", url: ECI_LINKS.ngsp, color: '#0D1B4B' },
+    { id: 'ceos', label: "CEO Directory", sub: "Contact state officers", icon: "📁", url: ECI_LINKS.ceosDir, color: '#6B7280' },
+  ];
 
   return (
-    <div style={{ fontFamily: LANG_FONTS[language] || "'Public Sans', sans-serif", backgroundColor: '#F9F9F9', minHeight: '100vh', padding: '1.5rem 1.25rem 6rem' }}>
+    <div style={{ fontFamily: activeFont, backgroundColor: '#F5F6FA', minHeight: '100vh', padding: '1.5rem 1.25rem' }}>
+      <h2 style={{ margin: '0 0 1rem', fontSize: '1.5rem', fontWeight: 800, color: '#0D1B4B', textAlign: 'center' }}>
+        {t('help_complaints', language)}
+      </h2>
 
-      {/* Offline Banner */}
-      {!isOnline && (
-        <div style={{ background: '#FEF2F2', border: '2px solid #FECACA', borderRadius: '0.875rem', padding: '0.875rem 1rem', display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
-          <WifiOff size={22} style={{ color: '#DC2626', flexShrink: 0 }} />
-          <p style={{ margin: 0, fontWeight: 600, color: '#991B1B', fontSize: '0.9rem' }}>
-            You are offline. ECI portals require internet. Practice Booth and FAQs still work.
-          </p>
-        </div>
-      )}
-
-      <h2 style={{ margin: '0 0 1.5rem', fontSize: '1.75rem', fontWeight: 800, color: NAVY }}>{t('help_title', language)}</h2>
-
-      {/* ── ASK BY VOICE ───────────────────────────────── */}
-      <div style={{
-        background: `linear-gradient(135deg, ${NAVY} 0%, #1a1a8c 100%)`,
-        borderRadius: '1.25rem', padding: '1.5rem', textAlign: 'center', marginBottom: '1.5rem',
-        boxShadow: '0 6px 20px rgba(0,0,128,0.25)',
-      }}>
-        <p style={{ color: '#ffffff', fontWeight: 700, fontSize: '1.1rem', marginBottom: '1rem' }}>Ask any voting question</p>
+      {/* AI Assistant Banner */}
+      <div style={{ background: 'linear-gradient(135deg, #0D1B4B 0%, #1a1a3a 100%)', borderRadius: '16px', padding: '1.5rem', marginBottom: '20px', textAlign: 'center' }}>
+        <p style={{ color: '#FFFFFF', fontWeight: 700, fontSize: '15px', marginBottom: '12px' }}>
+          {t('ask_ai_help', language) || "Ask Matdaata Mitra anything about voting"}
+        </p>
         <button
-          onClick={() => playAudio('Tap to speak your question. I will answer it for you.')}
+          onClick={() => playAudio(t('ask_voice_audio', language))}
           style={{
-            width: '5rem', height: '5rem', borderRadius: '9999px',
-            background: SAFFRON, border: 'none', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.75rem',
-            boxShadow: '0 4px 16px rgba(255,153,51,0.5)',
+            width: '3.5rem', height: '3.5rem', borderRadius: '50%',
+            background: '#FF6B00', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto', boxShadow: '0 4px 12px rgba(255,107,0,0.3)', cursor: 'pointer'
           }}
         >
-          <Mic size={40} color="#ffffff" />
+          <Mic size={24} color="#FFFFFF" />
         </button>
-        <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.875rem', margin: 0 }}>Tap the mic and speak</p>
       </div>
 
-      {/* ── IMMEDIATE CONTACT OPTIONS ─────────────────── */}
-      <p style={{ fontWeight: 700, color: NAVY, fontSize: '1rem', margin: '0 0 0.75rem' }}>📞 Contact ECI Directly</p>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.5rem' }}>
-        <LinkButton
-          icon={PhoneCall} label="Call 1950" sublabel="Free ECI Helpline"
-          color={GREEN}
-          onPress={() => { playAudio(ECI_AUDIO.helpline); openECILink(ECI_LINKS.helpline, 'ECI Helpline 1950', null); }}
-        />
-        <LinkButton
-          icon={Mail} label="Email ECI" sublabel="complaints@eci.gov.in"
-          color={SAFFRON}
-          onPress={() => open(ECI_LINKS.complaintsEmail, 'Email Complaint', ECI_AUDIO.email)}
-        />
-        <LinkButton
-          icon={Globe} label="File Online Complaint" sublabel="NGSP Portal"
-          color={NAVY}
-          onPress={() => open(ECI_LINKS.ngsp, 'NGSP Grievance Portal', ECI_AUDIO.grievance)}
-        />
-        <LinkButton
-          icon={Calendar} label="Book BLO Call" sublabel="Meet your Officer"
-          color="#7C3AED"
-          onPress={() => open(ECI_LINKS.eciNet, 'Book BLO Call', ECI_AUDIO.blo)}
-        />
-      </div>
-
-      {/* ── QUICK LINKS ───────────────────────────────── */}
-      <p style={{ fontWeight: 700, color: NAVY, fontSize: '1rem', margin: '0 0 0.75rem' }}>🔗 Quick Links</p>
-      <div style={{ background: '#ffffff', border: '2px solid #e0e0e0', borderRadius: '1.25rem', overflow: 'hidden', marginBottom: '1.5rem' }}>
-        {[
-          { icon: Globe,       label: 'ECI Official Website',    sub: 'eci.gov.in',                url: ECI_LINKS.eciMain,         audio: null },
-          { icon: Globe,       label: 'Voters Service Portal',   sub: 'voters.eci.gov.in',         url: ECI_LINKS.vsp,             audio: null },
-          { icon: BarChart2,   label: 'Election Results',        sub: 'results.eci.gov.in',        url: ECI_LINKS.results,         audio: null },
-          { icon: Globe,       label: 'My State CEO Office',     sub: 'All state CEO contacts',    url: ECI_LINKS.allCEOs,         audio: null },
-          { icon: Smartphone,  label: 'Download Voter Helpline App', sub: 'Google Play Store',     url: ECI_LINKS.voterHelplineApp,audio: null },
-          { icon: AlertTriangle, label: 'Report MCC Violation (cVIGIL)', sub: 'Citizen reporting', url: ECI_LINKS.cVigilApp,       audio: null },
-          { icon: Shield,      label: 'Know Your Candidate',     sub: 'KYC App',                   url: ECI_LINKS.kycApp,          audio: null },
-          { icon: Globe,       label: 'NVSP Legacy Portal',      sub: 'nvsp.in',                   url: ECI_LINKS.nvsp,            audio: null },
-        ].map((item, i, arr) => (
+      {/* Immediate Actions */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '2rem' }}>
+        {HELP_ACTIONS.map(action => (
           <button
-            key={item.label}
-            onClick={() => open(item.url, item.label, item.audio)}
+            key={action.id}
+            onClick={() => openECILink(action.url, action.label, playAudio, language)}
             style={{
-              display: 'flex', alignItems: 'center', gap: '0.875rem', width: '100%',
-              padding: '0.875rem 1.25rem', border: 'none', background: 'transparent', cursor: 'pointer',
-              borderBottom: i < arr.length - 1 ? '1px solid #f0f0f0' : 'none',
+              display: 'flex', alignItems: 'center', gap: '12px', width: '100%',
+              background: '#FFFFFF', border: '1px solid #E2E6F0', borderRadius: '12px',
+              padding: '16px', cursor: 'pointer', textAlign: 'left'
             }}
           >
-            <item.icon size={20} style={{ color: NAVY, flexShrink: 0 }} />
-            <div style={{ flex: 1, textAlign: 'left' }}>
-              <p style={{ margin: 0, fontWeight: 700, color: NAVY, fontSize: '0.9rem' }}>{item.label}</p>
-              <p style={{ margin: 0, color: '#767684', fontSize: '0.75rem' }}>{item.sub}</p>
+            <span style={{ fontSize: '24px' }}>{action.icon}</span>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '15px', color: action.color }}>{action.label}</div>
+              <div style={{ fontSize: '12px', color: '#6B7280' }}>{action.sub}</div>
             </div>
-            <ChevronRight size={18} style={{ color: '#c6c5d5' }} />
+            <span style={{ marginLeft: 'auto', color: '#9CA3AF' }}>→</span>
           </button>
         ))}
       </div>
 
-      {/* ── FAQs ──────────────────────────────────────── */}
-      <p style={{ fontWeight: 700, color: NAVY, fontSize: '1rem', margin: '0 0 0.75rem' }}>❓ Frequently Asked Questions</p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', marginBottom: '1.5rem' }}>
+      {/* FAQ Section */}
+      <p style={{ fontWeight: 700, color: '#0D1B4B', fontSize: '14px', margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        {t('faqs_title', language)}
+      </p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {faqs.map((faq, i) => (
-          <div
-            key={i}
-            style={{
-              background: '#ffffff', border: '2px solid #e0e0e0',
-              borderRadius: '0.875rem', overflow: 'hidden',
-            }}
-          >
+          <div key={i} style={{ background: '#FFFFFF', border: '1px solid #E2E6F0', borderRadius: '12px', overflow: 'hidden' }}>
             <button
               onClick={() => { setOpenFaq(openFaq === i ? null : i); playAudio(faq.a); }}
-              style={{
-                width: '100%', display: 'flex', alignItems: 'center', gap: '0.75rem',
-                padding: '1rem 1.25rem', border: 'none', background: 'transparent', cursor: 'pointer',
-              }}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px', padding: '14px', border: 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left' }}
             >
-              <HelpCircle size={18} style={{ color: SAFFRON, flexShrink: 0 }} />
-              <span style={{ flex: 1, textAlign: 'left', fontWeight: 700, color: NAVY, fontSize: '0.9rem' }}>{faq.q}</span>
-              <ChevronRight size={16} style={{ color: '#c6c5d5', transform: openFaq === i ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }} />
+              <HelpCircle size={18} style={{ color: '#FF6B00', flexShrink: 0 }} />
+              <span style={{ flex: 1, fontWeight: 700, color: '#0D1B4B', fontSize: '13.5px' }}>{faq.q}</span>
+              <ChevronRight size={16} style={{ color: '#9CA3AF', transform: openFaq === i ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }} />
             </button>
             {openFaq === i && (
-              <div style={{ padding: '0 1.25rem 1rem', color: '#464653', fontSize: '0.9rem', fontWeight: 500, lineHeight: 1.6 }}>
+              <div style={{ padding: '0 14px 14px', color: '#464653', fontSize: '13px', lineHeight: 1.5 }}>
                 {faq.a}
               </div>
             )}
           </div>
         ))}
-      </div>
-
-      {/* ECI Helpline Note */}
-      <div style={{
-        background: '#F0FDF4', border: '2px solid #BBF7D0', borderRadius: '0.875rem',
-        padding: '1rem 1.25rem', display: 'flex', gap: '0.75rem', alignItems: 'flex-start',
-      }}>
-        <PhoneCall size={20} style={{ color: GREEN, flexShrink: 0, marginTop: '2px' }} />
-        <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: 600, color: '#166534' }}>
-          <strong>1950</strong> — Toll-free ECI Helpline<br />
-          {ECI_CONTACTS.helplineHours}<br />
-          Available in {ECI_CONTACTS.helplineLanguages}
-        </p>
       </div>
     </div>
   );

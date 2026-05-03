@@ -59,7 +59,7 @@ export default function FormWizard({ formType, playAudio, language }) {
   const handleSubmit = () => {
     playAudio(config.audio);
     setTimeout(() => {
-      openECILink(config.url, config.title, null);
+      openECILink(config.url, config.title, playAudio, language);
       setSubmitted(true);
     }, 1800);
   };
@@ -158,7 +158,7 @@ export default function FormWizard({ formType, playAudio, language }) {
           {/* Print fallback */}
           {config.pdfUrl && (
             <button
-              onClick={() => openECILink(config.pdfUrl, 'Form 6 PDF', playAudio)}
+              onClick={() => openECILink(config.pdfUrl, 'Form 6 PDF', playAudio, language)}
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', width: '100%', background: '#F3F3F4', color: NAVY, border: `2px solid #e0e0e0`, borderRadius: '0.875rem', padding: '0.875rem', fontWeight: 700, fontSize: '1rem', cursor: 'pointer', marginBottom: '0.75rem', fontFamily: LANG_FONTS[language] }}
             >
               <Printer size={20} /> {t('download_print', language)}
@@ -175,14 +175,14 @@ export default function FormWizard({ formType, playAudio, language }) {
           <p style={{ color: '#767684', fontWeight: 500, marginBottom: '1.5rem' }}>{t('form_complete_hint', language)}</p>
 
           <button
-            onClick={() => openECILink(ECI_LINKS.trackApplication, 'Track Application', playAudio)}
+            onClick={() => openECILink(ECI_LINKS.trackApplication, 'Track Application', playAudio, language)}
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', width: '100%', background: SAFFRON, color: NAVY, border: 'none', borderRadius: '0.875rem', padding: '1rem', fontWeight: 800, fontSize: '1.05rem', cursor: 'pointer', marginBottom: '0.75rem', fontFamily: LANG_FONTS[language] }}
           >
             <BarChart2 size={22} /> {t('track_status', language)}
           </button>
 
           <button
-            onClick={() => openECILink(ECI_LINKS.eEpic, 'Download e-EPIC', playAudio)}
+            onClick={() => openECILink(ECI_LINKS.eEpic, 'Download e-EPIC', playAudio, language)}
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', width: '100%', background: '#EFF6FF', color: NAVY, border: '2px solid #BFDBFE', borderRadius: '0.875rem', padding: '0.875rem', fontWeight: 700, fontSize: '1rem', cursor: 'pointer', fontFamily: LANG_FONTS[language] }}
           >
             <ExternalLink size={20} /> {t('download_id', language)}

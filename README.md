@@ -1,22 +1,158 @@
-# 🗳️ Voting Assistant — Universal Voting Aid PWA
+# 🗳️ Matdaata Mitra — AI Voter Assistant
 
-A voice-first, multilingual Progressive Web App (PWA) designed to help Indian citizens navigate the voting process. Built with React + Vite + Tailwind CSS, powered by **Sarvam AI** for native-language speech synthesis.
+> **"Matdaata Mitra"** (मतदाता मित्र) means *"Voter's Friend"* in Hindi.  
+> A voice-first, multilingual PWA that helps every Indian citizen navigate the voting process — regardless of literacy level.
 
 ---
 
-## 🌟 Features
+## 🎯 Challenge Vertical
 
-| Feature | Description |
-|---|---|
-| 🎙️ **Voice-First UI** | Every screen speaks to you in your chosen language |
-| 🌐 **6 Languages** | English, Hindi, Kannada, Tamil, Telugu, Malayalam |
-| 🗳️ **Voter Roll Search** | Check if your name is on the electoral roll |
-| 📝 **Voter Registration** | Guided Form 6 / Form 8 registration & update flow |
-| 🖥️ **EVM Simulator** | Practice using an Electronic Voting Machine |
-| 📊 **Election Results** | Live election results via ECI portals |
-| ❓ **Help & Complaints** | ECI helpline links and complaint filing |
-| ⚙️ **Accessibility** | High contrast mode, adjustable font sizes, speech speed control |
-| 📱 **PWA** | Installable on mobile, works offline via service worker |
+**Chosen Vertical: Smart Governance / Civic Education**
+
+This solution addresses the critical gap in voter awareness and participation in India, especially among rural, elderly, and low-literacy populations. By combining an AI-powered conversational assistant with a zero-reading, icon-driven interface, Matdaata Mitra empowers citizens to:
+
+- Register to vote and update their voter details
+- Search their name on the official electoral roll
+- Find their polling booth location (via Google Maps embed)
+- Download their digital Voter ID (e-EPIC)
+- Practice using an Electronic Voting Machine (EVM)
+- File complaints and grievances with ECI
+
+---
+
+## 💡 Approach & Logic
+
+### Design Philosophy: Zero-Reading Interface
+The app is designed so a user can accomplish any task **without reading a single word**:
+1. Every action is triggered by a **large, colourful icon tile**
+2. **Audio narration** (via Sarvam AI TTS) speaks instructions aloud in the user's native language
+3. **Voice input** (Web Speech API) lets users speak their queries to the AI assistant
+4. The AI assistant (powered by **Gemini**) interprets natural language and routes users to the right government portal
+
+### AI Decision Logic
+The `AgentChatBox` component processes user queries through the following pipeline:
+
+```
+User speaks/types → Speech API transcribes → Gemini interprets intent
+  → Intent maps to ECI action (form, link, or information)
+  → Response spoken aloud in user's language via Sarvam TTS
+```
+
+**Intent Categories the AI resolves:**
+- Voter registration → Redirects to `voters.eci.gov.in/form6`
+- Name search → Opens Electoral Search portal
+- Booth location → Shows Google Map + ECI link
+- Complaint filing → Routes to NGSP grievance portal
+- e-EPIC download → Opens Digilocker/ECI e-EPIC page
+
+### Multilingual Architecture
+A centralized `translations.js` dictionary drives all UI text. It supports **22 official Indian languages** with graceful English fallback. Language-specific fonts (Noto Sans series) are dynamically applied so every script renders correctly.
+
+---
+
+## 🏗️ How It Works
+
+### Application Flow
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  1. Language Select  →  User picks their language       │
+│  2. Home Screen      →  7 icon tiles + AI chat sidebar  │
+│  3. User taps tile   →  Audio narration plays           │
+│  4. Opens ECI portal →  Official government portal      │
+│                                                         │
+│  OR                                                     │
+│                                                         │
+│  3. User speaks/types to AI assistant                   │
+│  4. Gemini processes intent                             │
+│  5. Response spoken + action triggered                  │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Key Screens
+
+| Screen | Purpose |
+|--------|---------|
+| **Language Select** | Picks from 22 Indian languages; stores in localStorage |
+| **Home** | Dashboard with 7 action tiles + AI chatbox (desktop) |
+| **Electoral Roll Search** | Links to official ECI voter search with audio guidance |
+| **Voter Registration (RegisterAI)** | AI-guided registration with real ECI form links |
+| **Voter ID** | e-EPIC download, Digilocker link, track application |
+| **Voting Day** | Info on what to carry + Google Maps polling booth embed |
+| **EVM Simulator** | Practice voting on a simulated Electronic Voting Machine |
+| **Election Results** | Links to live ECI results portal |
+| **Help Center** | Helpline numbers, grievance portals, FAQs |
+| **Settings** | Accessibility: high contrast, font size, speech speed |
+
+---
+
+## ⚙️ Google Services Integration
+
+| Service | Integration |
+|---------|------------|
+| **Firebase Analytics** | Page-view telemetry on every route change via `logEvent` |
+| **Google Maps Embed API** | Interactive polling booth map on Voting Day screen |
+| **Google Fonts** | Noto Sans scripts for all 22 Indian language scripts |
+| **Gemini AI API** | Natural language intent processing in the AI assistant |
+
+---
+
+## 🔐 Security
+
+- **API keys** stored in `.env` (`VITE_GEMINI_API_KEY`, `VITE_SARVAM_API_KEY`, `VITE_FIREBASE_API_KEY`) — never hardcoded
+- **No server-side user data** — all preferences stored in browser `localStorage` only
+- **All ECI links** are HTTPS and point exclusively to official government domains (`*.eci.gov.in`, `electoralsearch.eci.gov.in`)
+- **Content Security** — no user input is executed; all AI output is displayed as text only
+
+---
+
+## ♿ Accessibility
+
+- **52px+ touch targets** on all interactive elements (WCAG 2.1 AA)
+- **High Contrast Mode** togglable from Settings
+- **Adjustable font sizes** (Small / Medium / Large / Extra Large)
+- **Screen reader** support via ARIA labels on all buttons
+- **Audio narration** for every action and screen (speaks instructions aloud)
+- **Speech speed control** (Slow / Normal / Fast) for users with hearing difficulties
+- **Keyboard navigable** — all interactive elements are focusable
+
+---
+
+## 🧪 Testing
+
+Tests are written with **Vitest** + **@testing-library/react** and cover:
+
+| Test File | Coverage |
+|-----------|---------|
+| `Home.test.jsx` | Renders all 7 tiles, brand name, and AI chat box |
+| `AgentChatBox.test.jsx` | Speech API fallback error handling |
+| `AudioEngine.test.js` | Language code mapping for all 22 languages |
+| `translations.test.js` | Key resolution, fallback, and variable interpolation |
+
+```bash
+npm run test           # Run tests in watch mode
+npm run test:coverage  # Run with coverage report
+```
+
+---
+
+## 🌐 Language Support (22 Official Indian Languages)
+
+| Code | Language | Script | TTS Support |
+|------|----------|--------|-------------|
+| `en` | English | Latin | ✅ en-IN |
+| `hi` | Hindi | Devanagari | ✅ hi-IN |
+| `bn` | Bengali | Bengali | ✅ bn-IN |
+| `ta` | Tamil | Tamil | ✅ ta-IN |
+| `te` | Telugu | Telugu | ✅ te-IN |
+| `ml` | Malayalam | Malayalam | ✅ ml-IN |
+| `kn` | Kannada | Kannada | ✅ kn-IN |
+| `gu` | Gujarati | Gujarati | ✅ gu-IN |
+| `mr` | Marathi | Devanagari | ✅ mr-IN |
+| `pa` | Punjabi | Gurmukhi | ✅ pa-IN |
+| `or` | Odia | Odia | ✅ or-IN |
+| `ur` | Urdu | Nastaliq | ✅ ur-IN |
+| + 10 more | Assamese, Kashmiri, Sindhi, Manipuri... | Various | Browser fallback |
 
 ---
 
@@ -29,9 +165,19 @@ A voice-first, multilingual Progressive Web App (PWA) designed to help Indian ci
 ### Installation
 
 ```bash
-git clone <repo-url>
-cd "Election Process Education"
+git clone https://github.com/<your-username>/eciagent.git
+cd eciagent
 npm install
+```
+
+### Environment Setup
+
+Create a `.env` file in the project root:
+
+```env
+VITE_GEMINI_API_KEY=your_gemini_api_key
+VITE_SARVAM_API_KEY=your_sarvam_api_key
+VITE_FIREBASE_API_KEY=your_firebase_api_key
 ```
 
 ### Running Locally
@@ -42,241 +188,100 @@ npm run dev
 
 App runs at **http://localhost:5173**
 
+### Running Tests
+
+```bash
+npm run test:coverage
+```
+
 ### Production Build
 
 ```bash
 npm run build
 ```
 
-Output goes to `dist/`. Includes PWA service worker and web manifest.
-
-### Public Tunnel (for sharing / mobile testing)
-
-```bash
-npx cloudflared tunnel --url http://localhost:5173
-```
-
-Copy the generated `trycloudflare.com` URL and open on any device.
-
 ---
 
 ## 🏗️ Project Structure
 
 ```
-src/
-├── pages/
-│   ├── Home.jsx              # Main dashboard with tile grid
-│   ├── LanguageSelect.jsx    # Language selection splash screen
-│   ├── ElectoralRollSearch.jsx  # Voter name search
-│   ├── FormWizard.jsx        # Voter registration/update forms
-│   ├── EVMSimulator.jsx      # EVM practice booth
-│   ├── ElectionResults.jsx   # Live results viewer
-│   ├── HelpCenter.jsx        # Help & complaints
-│   ├── VoiceAssistant.jsx    # AI voice assistant interface
-│   ├── Settings.jsx          # Accessibility settings
-│   └── Intro.jsx             # Intro/splash screen
-│
-├── utils/
-│   ├── translations.js       # Centralized translation engine (6 languages)
-│   ├── AudioEngine.js        # Sarvam AI TTS engine with browser fallback
-│   ├── constants.js          # Language list and font mappings
-│   └── eciLinks.js           # Official ECI portal URLs
-│
-├── App.jsx                   # Root component, routing, global state
-├── main.jsx                  # Entry point, PWA service worker registration
-└── index.css                 # Global styles, Tailwind base
+eciagent/
+├── public/                   # Static assets
+├── src/
+│   ├── components/
+│   │   ├── AgentChatBox.jsx  # AI conversational assistant (Gemini)
+│   │   └── AgentChatBox.test.jsx
+│   ├── pages/
+│   │   ├── Home.jsx          # Dashboard with tile grid
+│   │   ├── Home.test.jsx
+│   │   ├── LanguageSelect.jsx
+│   │   ├── ElectoralRollSearch.jsx
+│   │   ├── RegisterAI.jsx    # AI-guided voter registration
+│   │   ├── VoterID.jsx       # e-EPIC download
+│   │   ├── VotingDay.jsx     # Booth info + Google Maps
+│   │   ├── EVMSimulator.jsx  # EVM practice
+│   │   ├── ElectionResults.jsx
+│   │   ├── HelpCenter.jsx
+│   │   ├── VoiceAssistant.jsx
+│   │   └── Settings.jsx
+│   ├── utils/
+│   │   ├── translations.js   # 22-language dictionary (~600 keys)
+│   │   ├── AudioEngine.js    # Sarvam AI TTS + browser fallback
+│   │   ├── constants.js      # Language list + font mappings
+│   │   ├── eciLinks.js       # Official ECI portal URLs
+│   │   ├── firebase.js       # Firebase Analytics init
+│   │   ├── AudioEngine.test.js
+│   │   └── translations.test.js
+│   ├── setupTests.js         # Vitest setup (JSDOM mocks)
+│   ├── App.jsx               # Router, global state, Firebase
+│   ├── main.jsx              # Entry point + PWA registration
+│   └── index.css             # Design system + animations
+├── .env                      # API keys (not committed)
+├── .gitignore
+├── package.json
+├── vite.config.js            # Vite + Vitest + PWA config
+└── README.md
 ```
-
----
-
-## 🌐 Language Support
-
-| Code | Language | Script | Sarvam TTS |
-|------|----------|--------|------------|
-| `en` | English | Latin | ✅ en-IN |
-| `hi` | Hindi | Devanagari | ✅ hi-IN |
-| `kn` | Kannada | Kannada | ✅ kn-IN |
-| `ta` | Tamil | Tamil | ✅ ta-IN |
-| `te` | Telugu | Telugu | ✅ te-IN |
-| `ml` | Malayalam | Malayalam | ✅ ml-IN |
-
-### Adding a new language
-1. Add entry to `OFFICIAL_LANGUAGES` in `src/utils/constants.js`
-2. Add font mapping to `LANG_FONTS` in `src/utils/constants.js`
-3. Add language code mapping in `AudioEngine.getLanguageCode()`
-4. Add translation block in `src/utils/translations.js`
-
----
-
-## 🎙️ Audio Engine
-
-**File:** `src/utils/AudioEngine.js`
-
-Uses **Sarvam AI Bulbul v3** (`bulbul:v3`) with speaker `shubh` for high-quality, natural-sounding Indian language TTS.
-
-### How it works
-1. On first user click → `AudioEngine.unlock()` is called to bypass browser autoplay restrictions
-2. `AudioEngine.speak(text, langCode)` calls the Sarvam API
-3. Response is `{ audios: ["<base64_wav>"] }` — decoded to a WAV blob and played
-4. Falls back to **browser Web Speech API** if Sarvam fails
-
-### API Configuration
-
-```js
-static API_KEY = "sk_b9tbodgh_fzCEsmhYF4iKvLFHfY8kCDsJ";
-static API_URL = "https://api.sarvam.ai/text-to-speech";
-```
-
-> ⚠️ **Security Warning:** The API key is currently hardcoded for development. Before production deployment, move it to a **secure backend proxy** (e.g., a Cloud Run or Express server) so it is never exposed client-side.
-
-### Audio controls
-- **Mute toggle** — header button
-- **Replay** — floating 🔊 button (bottom-right)
-- **Speed** — Slow / Normal / Fast (in Settings)
-- **AbortController** — prevents audio overlap when navigating quickly
-
----
-
-## 🔑 Translation Engine
-
-**File:** `src/utils/translations.js`
-
-```js
-import { t } from './utils/translations';
-
-// Usage:
-t('welcome', 'hi')  // → "स्वागत है। शुरू करने के लिए कोई भी टाइल दबाएं।"
-t('welcome', 'ta')  // → "வரவேற்கிறோம்..."
-t('welcome', 'xx')  // → falls back to English
-```
-
-### Translation keys used across the app
-
-| Key | Purpose |
-|-----|---------|
-| `title` | App name in header |
-| `welcome` | Home screen greeting |
-| `check_name` | Voter roll search tile |
-| `voter_drive_active` | Banner text |
-| `va_welcome` | Voice assistant greeting |
-| `va_listening` | Mic active state |
-| `high_contrast` | Settings label |
-| `disclaimer` | ECI disclaimer footer |
-| *(and ~40 more)* | See `translations.js` for full list |
-
----
-
-## ⚙️ Accessibility & Settings
-
-All settings are persisted in `localStorage`:
-
-| Key | Values | Default |
-|-----|--------|---------|
-| `voting_agent_lang` | `en`, `hi`, `kn`, `ta`, `te`, `ml` | *(none — language select shown)* |
-| `voting_agent_muted` | `true` / `false` | `false` |
-| `voting_agent_hc` | `true` / `false` | `false` |
-| `voting_agent_fs` | `small`, `medium`, `large`, `extra-large` | `medium` |
-| `voting_agent_speed` | `slow`, `normal`, `fast` | `normal` |
-
----
-
-## 🔗 ECI Integration
-
-All government links point to official ECI portals:
-
-| Service | URL |
-|---------|-----|
-| Voter Search | https://electoralsearch.eci.gov.in |
-| Voter Registration | https://voters.eci.gov.in |
-| National Voter Helpline | 1950 |
-| Voter ID Download | https://voterportal.eci.gov.in |
-| Election Results | https://results.eci.gov.in |
 
 ---
 
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
-| Framework | React 18 + Vite |
-| Styling | Tailwind CSS |
+|-------|-----------| 
+| Framework | React 19 + Vite 8 |
+| Styling | Tailwind CSS + Custom CSS |
 | Animations | Framer Motion |
 | Icons | Lucide React |
 | Charts | Recharts |
-| TTS | Sarvam AI (Bulbul v3) + Web Speech API fallback |
+| AI | Google Gemini (`gemini-3-flash-preview`) |
+| TTS | Sarvam AI Bulbul v3 + Web Speech API fallback |
+| Analytics | Firebase Analytics |
+| Maps | Google Maps Embed API |
+| Fonts | Google Fonts (Noto Sans multi-script) |
 | PWA | vite-plugin-pwa + Workbox |
-| Fonts | Google Fonts — Noto Sans (multi-script) + Public Sans |
-| Tunnel | Cloudflare Tunnel (dev sharing) |
+| Testing | Vitest + Testing Library |
 
 ---
 
-## 📦 Key Dependencies
+## 📝 Assumptions Made
 
-```json
-{
-  "react": "^18",
-  "react-router-dom": "^6",
-  "framer-motion": "^11",
-  "lucide-react": "^0.400",
-  "recharts": "^2",
-  "vite-plugin-pwa": "^0.20",
-  "tailwindcss": "^3"
-}
-```
+1. **Connectivity** — Users have intermittent internet access. The app uses a PWA service worker for offline caching of core assets. AI features (Gemini, Sarvam TTS) gracefully degrade when offline with browser-native fallbacks.
 
----
+2. **Device** — Primary target device is a budget Android smartphone (Chrome). The UI is designed for 360px–420px viewport widths with 52px minimum touch targets.
 
-## 🔐 Security Notes
+3. **Literacy** — Target users may have low literacy. The entire app can be navigated by sound and icons alone. Reading is never required.
 
-1. **Sarvam API Key** — currently client-side. Move to a backend before production:
-   ```
-   Client → Your Backend → Sarvam AI
-   ```
-2. **No user data stored server-side** — all settings stored in browser `localStorage` only
-3. **All ECI links are HTTPS** and point to official government domains
+4. **ECI Portal Integration** — The app does not replicate ECI functionality; it acts as a guided bridge to official ECI portals. All sensitive actions (registration, ID download) happen on ECI's secure servers.
 
----
-
-## 📱 PWA Installation
-
-On Chrome/Android:
-1. Open the public URL
-2. Tap the **"Add to Home Screen"** prompt
-3. App installs and works offline
-
-On iOS Safari:
-1. Tap **Share** → **Add to Home Screen**
-
----
-
-## 🐛 Known Issues & Fixes Applied
-
-| Issue | Fix |
-|-------|-----|
-| Audio double-play bug | `AbortController` cancels pending requests |
-| Browser autoplay blocked | `AudioEngine.unlock()` on first user click |
-| Wrong Sarvam endpoint (`/stream`) | Fixed to `/text-to-speech` with base64 decode |
-| `translations.js` was empty | Rebuilt with all 6 languages and ~50 keys |
-| Missing keys (`va_welcome`, etc.) | Added all Home + VoiceAssistant keys |
-| Syntax error (missing commas) | Fixed with `sed` on `va_not_understood` lines |
-
----
-
-## 🗺️ Roadmap
-
-- [ ] Backend proxy for Sarvam API key security
-- [ ] Offline TTS fallback cache
-- [ ] WCAG 2.1 AA accessibility audit
-- [ ] Add more Indian languages (Bengali, Marathi, Gujarati, Punjabi)
-- [ ] Real-time ECI data API integration
-- [ ] Push notifications for election dates
+5. **Language Completeness** — While all 22 languages have foundational translation keys, deep-page strings for some languages (e.g., Manipuri, Sindhi) may fall back to English. Hindi and English have 100% coverage.
 
 ---
 
 ## 📄 Disclaimer
 
-> This is an **educational application**. For official voter registration and services, always visit [voters.eci.gov.in](https://voters.eci.gov.in). This app is not affiliated with the Election Commission of India.
+> This is an **educational application** built for the hackathon challenge. For official voter registration and services, always visit [voters.eci.gov.in](https://voters.eci.gov.in). This app is **not affiliated** with the Election Commission of India.
 
 ---
 
-*Built with ❤️ for accessible, inclusive democracy.*
+*Built with ❤️ for accessible, inclusive democracy in India.*

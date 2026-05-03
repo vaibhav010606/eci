@@ -1,9 +1,9 @@
-// ─── ECI LINK REGISTRY (Verified 2025–2026) ────────────────────────────────
-// All URLs are live ECI portals. Do NOT substitute, shorten, or guess.
+import { t } from './translations';
 
 export const ECI_LINKS = {
   // TIER 1 — PRIMARY PORTALS
   vsp:                 'https://voters.eci.gov.in/',
+  vspHomepage:         'https://voters.eci.gov.in/homepage',
   vspLogin:            'https://voters.eci.gov.in/login',
   electoralSearch:     'https://electoralsearch.eci.gov.in/',
   eciMain:             'https://www.eci.gov.in/',
@@ -14,8 +14,8 @@ export const ECI_LINKS = {
   form6a:              'https://voters.eci.gov.in/form6a',
   form7:               'https://voters.eci.gov.in/form7',
   form8:               'https://voters.eci.gov.in/form8',
-  form6Pdf:            'https://voters.eci.gov.in/formspdf/Form_6_English.pdf',
   allForms:            'https://www.eci.gov.in/download-forms',
+  form6Pdf:            'https://voters.eci.gov.in/formspdf/Form_6_English.pdf',
   trackApplication:    'https://voters.eci.gov.in/track-application-status',
 
   // TIER 3 — VOTER ID & ELECTORAL ROLL
@@ -30,11 +30,13 @@ export const ECI_LINKS = {
 
   // TIER 5 — RESULTS & CONTACTS
   results:             'https://results.eci.gov.in/',
-  allCEOs:             'https://eci.gov.in/contact-us/ceos/',
+  allCEOs:             'https://www.eci.gov.in/ceo-websites',
+  ceosDir:             'https://eci.gov.in/contact-us/ceos/',
+  bookBLO:             'https://ecinet.eci.gov.in/homepage',
 
   // TIER 6 — APPS
   voterHelplineApp:    'https://play.google.com/store/apps/details?id=com.eci.citizen&hl=en_US',
-  cVigilApp:           'https://play.google.com/store/apps/details?id=in.eci.cvigil',
+  cVigilApp:           'https://play.google.com/store/apps/details?id=in.nic.eci.cvigil',
   kycApp:              'https://play.google.com/store/apps/details?id=com.eci.ksa',
   cVigilInfo:          'https://eci.gov.in/cvigil/',
 
@@ -44,13 +46,13 @@ export const ECI_LINKS = {
   ictApps:             'https://eci.gov.in/divisions-of-eci/ict-apps/',
 };
 
-export const ECI_CONTACTS = {
+export const getEciContacts = (lang) => ({
   helplineNumber: '1950',
-  helplineHours: 'Monday to Saturday, 10:00 AM to 5:00 PM',
-  helplineLanguages: 'Hindi, English, and all major regional languages',
+  helplineHours: t('eci_helpline_hours', lang),
+  helplineLanguages: t('eci_helpline_langs', lang),
   complaintsEmail: 'complaints@eci.gov.in',
   smsFormat: 'SMS: ECI <space> <your EPIC number> to 1950',
-};
+});
 
 // Health-check URLs for startup ping
 export const ECI_HEALTH_CHECK_URLS = [
@@ -59,32 +61,32 @@ export const ECI_HEALTH_CHECK_URLS = [
   'https://results.eci.gov.in/',
 ];
 
-// Audio scripts
-export const ECI_AUDIO = {
-  openingPortal: 'I am opening the official Election Commission website. It is safe and government-run.',
-  offline:       'You are currently offline. This feature requires internet. Please connect and try again. You can still use the Practice Booth and FAQs.',
-  helpline:      'You can call 1950. It is free. The helpline is open Monday to Saturday, 10 AM to 5 PM. They speak Hindi, English, and most Indian languages.',
-  email:         'You can email your complaint to complaints at eci dot gov dot in.',
-  grievance:     'I am opening the online complaints portal of the Election Commission. You can file and track your complaint here.',
-  blo:           'I am opening the Book-a-Call portal. You can schedule a call with your local Booth Level Officer here.',
-};
-
-// DISCLAIMER (must appear on Home & Settings)
-export const APP_DISCLAIMER =
-  'Vaibhav is an independent civic technology tool that helps users access official Election Commission of India services. All voter registrations, corrections, and complaints are processed directly by the ECI through their official portals. Vaibhav does not store your voter data. This app is not affiliated with or endorsed by the Election Commission of India.';
-
 /**
  * Opens an ECI link in a new tab with audio briefing and offline check.
  * @param {string} url  - The ECI URL to open
  * @param {string} label - Human-readable label for audio & analytics
  * @param {Function} playAudio - App's audio function
+ * @param {string} lang - Selected language
  */
-export function openECILink(url, label, playAudio) {
+export function openECILink(url, label, playAudio, lang = 'en') {
   if (!navigator.onLine) {
-    if (playAudio) playAudio(ECI_AUDIO.offline);
+    if (playAudio) playAudio(t('eci_offline', lang));
     return false;
   }
-  if (playAudio) playAudio(ECI_AUDIO.openingPortal);
+  
+  // Custom audio logic based on URL type
+  if (url.includes('ngsp')) {
+    if (playAudio) playAudio(t('eci_grievance_audio', lang));
+  } else if (url.includes('ecinet')) {
+    if (playAudio) playAudio(t('eci_blo_audio', lang));
+  } else if (url === 'tel:1950') {
+    if (playAudio) playAudio(t('eci_helpline_audio', lang));
+  } else if (url.startsWith('mailto:')) {
+    if (playAudio) playAudio(t('eci_email_audio', lang));
+  } else {
+    if (playAudio) playAudio(t('eci_opening_portal', lang));
+  }
+
   // tel: and mailto: don't need _blank
   if (url.startsWith('tel:') || url.startsWith('mailto:')) {
     window.location.href = url;
