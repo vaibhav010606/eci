@@ -76,9 +76,10 @@ Matdaata Mitra features a centralized translation engine supporting:
 ## 🧪 Testing Suite
 
 We maintain a robust testing environment with **Vitest** and **React Testing Library**:
-- **Unit Tests**: Logic verification for the translation engine, security utilities, and audio mapping.
-- **Integration Tests**: Verification of the Home dashboard, AI Chatbox, and Electoral Search flows.
-- **Accessibility Audit**: Automated checks for ARIA compliance and color contrast.
+- **Coverage**: **126 Unit and Integration Tests** yielding **84.9% Overall Test Coverage**.
+- **Unit Tests**: Logic verification for the translation engine, security utilities, and audio fallback mappings.
+- **Integration Tests**: Complete verification of the Home dashboard, AI Chatbox, and Electoral Search flows.
+- **Accessibility Audit**: Automated tests for ARIA compliance and color contrast rendering.
 
 Run the test suite:
 ```bash
