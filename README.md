@@ -2,6 +2,8 @@
 
 > **Empowering every Indian citizen with a voice-first, zero-reading, and multilingual voting guide.**
 
+🌐 **Live Demo:** [https://matdaata-mitra-411771143514.asia-south1.run.app](https://matdaata-mitra-411771143514.asia-south1.run.app)
+
 Matdaata Mitra is a high-performance Progressive Web App (PWA) designed to eliminate barriers to electoral participation in India. It is specifically engineered for rural, elderly, and low-literacy populations by providing a **zero-reading interface** where every interaction is driven by icons, voice, and intelligent AI assistance.
 
 ---
