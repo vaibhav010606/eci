@@ -178,8 +178,13 @@ Response:`;
         </h2>
       </div>
 
-      {/* Chat Area */}
-      <div style={{ flex: 1, padding: '1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem', backgroundColor: '#F9F9F9' }}>
+      {/* Chat Area - aria-live announces new messages to screen readers */}
+      <div
+        role="log"
+        aria-live="polite"
+        aria-label="Conversation with Matdaata Mitra"
+        style={{ flex: 1, padding: '1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem', backgroundColor: '#F9F9F9' }}
+      >
         {messages.map((m, idx) => (
           <div key={idx} style={{ 
             alignSelf: m.sender === 'user' ? 'flex-end' : 'flex-start',

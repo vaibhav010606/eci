@@ -16,6 +16,7 @@ import VoterID from './pages/VoterID';
 import VotingDay from './pages/VotingDay';
 import AudioEngine from './utils/AudioEngine';
 import { analytics, logEvent } from './utils/firebase';
+import { saveUserPreferences, loadUserPreferences, ensureAnonymousAuth } from './utils/firestore';
 import { t } from './utils/translations';
 import { LANG_FONTS } from './utils/constants';
 
@@ -98,8 +99,22 @@ function App() {
   useEffect(() => {
     if (language) {
       document.documentElement.lang = language;
+      // Persist language to Firestore for cross-device sync
+      saveUserPreferences({ language, highContrast, fontSize });
     }
   }, [language]);
+
+  // Load preferences from Firestore on first mount
+  useEffect(() => {
+    ensureAnonymousAuth().then(() => {
+      loadUserPreferences().then(prefs => {
+        if (prefs?.language && !localStorage.getItem('voting_agent_lang')) {
+          setLanguage(prefs.language);
+          localStorage.setItem('voting_agent_lang', prefs.language);
+        }
+      });
+    });
+  }, []);
 
   useEffect(() => {
     const unlockAudio = () => {
@@ -140,6 +155,21 @@ function App() {
 
   return (
     <div style={appStyle}>
+      {/* ── SKIP NAVIGATION (Accessibility) ────────────────────── */}
+      <a
+        href="#main-content"
+        style={{
+          position: 'absolute', top: '-40px', left: '1rem', zIndex: 999,
+          background: '#FF6B00', color: '#fff', padding: '8px 16px',
+          borderRadius: '4px', fontWeight: 700, fontSize: '14px',
+          textDecoration: 'none',
+          transition: 'top 0.2s',
+        }}
+        onFocus={e => (e.target.style.top = '8px')}
+        onBlur={e => (e.target.style.top = '-40px')}
+      >
+        Skip to main content
+      </a>
       {/* ── HEADER ─────────────────────────────────────────── */}
       <header style={headerStyle}>
         <div
@@ -174,7 +204,7 @@ function App() {
       </header>
 
       {/* ── MAIN CONTENT ───────────────────────────────────── */}
-      <main style={{ maxWidth: location.pathname === '/' || location.pathname === '/language' ? '1200px' : '480px', margin: '0 auto', position: 'relative', minHeight: 'calc(100vh - 72px)' }}>
+      <main id="main-content" style={{ maxWidth: location.pathname === '/' || location.pathname === '/language' ? '1200px' : '480px', margin: '0 auto', position: 'relative', minHeight: 'calc(100vh - 72px)' }}>
         <Routes>
           <Route path="/" element={!language ? <LanguageSelect setLanguage={setLanguage} playAudio={playScreenAudio} /> : <Home isSirActive={isSirActive} playAudio={playScreenAudio} language={language} />} />
           <Route path="/language" element={<LanguageSelect setLanguage={setLanguage} playAudio={playScreenAudio} />} />
